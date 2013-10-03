@@ -23,9 +23,9 @@ def getTweets(user):
     while timeline:
         for tweet in timeline:
             #print tweet.keys()
-            print "lastId " +  str(tweet["id"])
+            #print "lastId " +  str(tweet["id"])
             tweet["text"] = tweet["text"].encode("UTF-8")
-            print tweet["text"]
+            #print tweet["text"]
             json.dump(tweet,tweetsSaida)
             tweetsSaida.write("\n")
             lastID= tweet["id"]
