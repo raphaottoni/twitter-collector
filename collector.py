@@ -16,23 +16,26 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth,parser=tweepy.parsers.JSONParser())
 
 def getTweets(user):
-    print "Coletando userrrrrrrrrrrrr " +  user
-    timeline = api.user_timeline(screen_name=user, count=200)
-    tweetsSaida = gzip.open("./profiles/"+user+".gz","a")
-    already_collectedFile = open(output_filename,"a")
-    while timeline:
-        for tweet in timeline:
-            #print tweet.keys()
-            #print "lastId " +  str(tweet["id"])
-            tweet["text"] = tweet["text"].encode("UTF-8")
-            #print tweet["text"]
-            json.dump(tweet,tweetsSaida)
-            tweetsSaida.write("\n")
-            lastID= tweet["id"]
-        timeline = api.user_timeline(screen_name=user, count=200, max_id=lastID -1)
-    tweetsSaida.close()
-    already_collectedFile.write(user+"\n")
-    already_collectedFile.close()
+    try:
+      print "Coletando userrrrrrrrrrrrr " +  user
+      timeline = api.user_timeline(screen_name=user, count=200)
+      tweetsSaida = gzip.open("./profiles/"+user+".gz","a")
+      already_collectedFile = open(output_filename,"a")
+      while timeline:
+          for tweet in timeline:
+              #print tweet.keys()
+              #print "lastId " +  str(tweet["id"])
+              tweet["text"] = tweet["text"].encode("UTF-8")
+              #print tweet["text"]
+              json.dump(tweet,tweetsSaida)
+              tweetsSaida.write("\n")
+              lastID= tweet["id"]
+          timeline = api.user_timeline(screen_name=user, count=200, max_id=lastID -1)
+      tweetsSaida.close()
+      already_collectedFile.write(user+"\n")
+      already_collectedFile.close()
+    except tweepy.error.TweepError:
+      pass
 
 # ---- MAIN --- #
 output_filename = "./twitterIDs_verificado"
