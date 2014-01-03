@@ -4,6 +4,11 @@ from config import *
 import gzip
 import json
 from multiprocessing import Pool
+import time 
+import logging
+
+#loggin setup
+logging.basicConfig(filename="collector.log", filemode="a", level=logging.INFO, format="[ %(asctime)s ] %(levelname)s : %(message)s")
 
 # oAuth authentication
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -17,7 +22,7 @@ api = tweepy.API(auth,parser=tweepy.parsers.JSONParser())
 
 def getTweets(user):
     try:
-      print "Coletando userrrrrrrrrrrrr " +  user
+      logging.info("colletando " + user)
       timeline = api.user_timeline(screen_name=user, count=200)
       tweetsSaida = gzip.open("./profiles/"+user+".gz","a")
       already_collectedFile = open(output_filename,"a")
@@ -31,10 +36,12 @@ def getTweets(user):
               tweetsSaida.write("\n")
               lastID= tweet["id"]
           timeline = api.user_timeline(screen_name=user, count=200, max_id=lastID -1)
+	  time.sleep(5)
       tweetsSaida.close()
       already_collectedFile.write(user+"\n")
       already_collectedFile.close()
-    except tweepy.error.TweepError:
+    except tweepy.error.TweepErroar, error:
+      logging.error("["+user+"]"+error)
       pass
 
 # ---- MAIN --- #
