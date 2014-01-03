@@ -1,3 +1,5 @@
+#! /usr/bin/python
+
 import tweepy
 #import twitter dev account informaiton
 from config import *
@@ -22,9 +24,9 @@ api = tweepy.API(auth,parser=tweepy.parsers.JSONParser())
 
 def getTweets(user):
     try:
-      logging.info("colletando " + user)
+      logging.info("colletando " + user + " - inicio")
       timeline = api.user_timeline(screen_name=user, count=200)
-      tweetsSaida = gzip.open("./profiles/"+user+".gz","a")
+      tweetsSaida = gzip.open("./profiles/"+user+".gz","w")
       already_collectedFile = open(output_filename,"a")
       while timeline:
           for tweet in timeline:
@@ -35,13 +37,14 @@ def getTweets(user):
               json.dump(tweet,tweetsSaida)
               tweetsSaida.write("\n")
               lastID= tweet["id"]
+      	  logging.info("colletando " + user + " - " + str(lastID))
           timeline = api.user_timeline(screen_name=user, count=200, max_id=lastID -1)
 	  time.sleep(5)
       tweetsSaida.close()
       already_collectedFile.write(user+"\n")
       already_collectedFile.close()
-    except tweepy.error.TweepErroar, error:
-      logging.error("["+user+"]"+error)
+    except tweepy.error.TweepError, error:
+      logging.error("["+user+"]"+str(error))
       pass
 
 # ---- MAIN --- #
